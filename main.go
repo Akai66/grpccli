@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/golang/protobuf/ptypes/timestamp"
 	"google.golang.org/grpc"
 	"grpcCli/helper"
 	"grpcCli/services"
 	"log"
+	"time"
 )
 
 func main()  {
@@ -22,7 +24,9 @@ func main()  {
 	}
 	defer conn.Close()
 
-	//创建service client
+	ctx := context.Background()
+
+	//创建prod service client
 	prodClient := services.NewProdServiceClient(conn)
 	////获取单个prod
 	////根据区域获取，如果不传ProdArea，默认是A
@@ -41,9 +45,22 @@ func main()  {
 	//fmt.Println(prodListRes.Prods)
 
 	//获取商品信息
-	prodInfo,err := prodClient.GetProdInfo(context.Background(),&services.ProdRequest{ProdId: 1})
+	prodInfo,err := prodClient.GetProdInfo(ctx,&services.ProdRequest{ProdId: 1})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	fmt.Println(prodInfo)
+
+	//先创建order service client
+	orderClient := services.NewOrderServiceClient(conn)
+	//创建订单
+	order := &services.OrderMain{
+		OrderId:1,
+		OrderNo: "111",
+		OrderPrice: 9.9,
+		UserId: 58,
+		OrderTime: &timestamp.Timestamp{Seconds: time.Now().Unix()},
+	}
+	orderRes,_ := orderClient.NewOrder(ctx,order)
+	fmt.Println(orderRes)
 }
