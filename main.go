@@ -24,20 +24,21 @@ func main()  {
 
 	//创建service client
 	prodClient := services.NewProdServiceClient(conn)
-	////调用方法
-	//prodRes,err := prodClient.GetProdStock(context.Background(),&services.ProdRequest{ProdId: 1})
-	//if err != nil {
-	//	log.Fatalln(err)
-	//}
-	//fmt.Printf("stock:%d\n",prodRes.ProdStock)
-
-	//获取多个prod
-	prodListRes,err := prodClient.GetProdStocks(context.Background(),&services.QuerySize{Size: 1})
+	//获取单个prod
+	//根据区域获取，如果不传ProdArea，默认是A
+	prodRes,err := prodClient.GetProdStock(context.Background(),&services.ProdRequest{ProdId: 1,ProdArea: services.ProdAreas_B})
 	if err != nil {
 		log.Fatalln(err)
 	}
+	fmt.Printf("stock:%d\n",prodRes.ProdStock)
 
-	fmt.Println(prodListRes.Prods)
+	////获取多个prod
+	//prodListRes,err := prodClient.GetProdStocks(context.Background(),&services.QuerySize{Size: 1})
+	//if err != nil {
+	//	log.Fatalln(err)
+	//}
+	//
+	//fmt.Println(prodListRes.Prods)
 
 
 }
