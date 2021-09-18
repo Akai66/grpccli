@@ -54,13 +54,16 @@ func main()  {
 	//先创建order service client
 	orderClient := services.NewOrderServiceClient(conn)
 	//创建订单
-	order := &services.OrderMain{
-		OrderId:1,
-		OrderNo: "111",
-		OrderPrice: 9.9,
-		UserId: 58,
-		OrderTime: &timestamp.Timestamp{Seconds: time.Now().Unix()},
+	orderReq := &services.OrderRequest{
+		OrderMain: &services.OrderMain{
+			OrderId:1,
+			OrderNo: "111",
+			OrderPrice: 9.9,
+			UserId: 58,
+			OrderTime: &timestamp.Timestamp{Seconds: time.Now().Unix()},
+		},
 	}
-	orderRes,_ := orderClient.NewOrder(ctx,order)
+
+	orderRes,_ := orderClient.NewOrder(ctx,orderReq)
 	fmt.Println(orderRes)
 }
