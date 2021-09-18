@@ -71,4 +71,18 @@ func main()  {
 
 	orderRes,_ := orderClient.NewOrder(ctx,orderReq)
 	fmt.Println(orderRes)
+
+
+	//先创建user service client
+	userClient := services.NewUserServiceClient(conn)
+	//获取用户积分
+	users := make([]*services.UserInfo,0)
+	var i int32
+	for i=1;i<8;i++ {
+		user := &services.UserInfo{UserId: i}
+		users = append(users, user)
+	}
+	userReq := &services.UserRequest{Users: users}
+	userRes,_ := userClient.GetUserScore(ctx,userReq)
+	fmt.Println(userRes.Users)
 }
