@@ -61,6 +61,11 @@ func main()  {
 			OrderPrice: 9.9,
 			UserId: 58,
 			OrderTime: &timestamp.Timestamp{Seconds: time.Now().Unix()},
+			OrderDetail: []*services.OrderDetail{
+				{DetailId: 1,OrderNo: "111",ProdId: 11,ProdPrice: 1.5,ProdNum: 110},
+				{DetailId: 2,OrderNo: "111",ProdId: 22,ProdPrice: 18,ProdNum: 8},
+				{DetailId: 3,OrderNo: "111",ProdId: 33,ProdPrice: 10.4,ProdNum: 20},
+			},
 		},
 	}
 
