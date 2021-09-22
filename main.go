@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc"
 	"grpcCli/helper"
 	"grpcCli/services"
+	"io"
 	"log"
 	"time"
 )
@@ -75,7 +76,7 @@ func main()  {
 
 	//先创建user service client
 	userClient := services.NewUserServiceClient(conn)
-	//获取用户积分
+	//普通模式，批量获取用户积分
 	users := make([]*services.UserInfo,0)
 	var i int32
 	for i=1;i<8;i++ {
@@ -85,4 +86,23 @@ func main()  {
 	userReq := &services.UserRequest{Users: users}
 	userRes,_ := userClient.GetUserScore(ctx,userReq)
 	fmt.Println(userRes.Users)
+
+	//服务端开启流模式，批量获取用户积分
+	stream,err := userClient.GetUserScoreByStream(ctx,userReq)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	//循环从流中读取数据
+	for {
+		uRes,err := stream.Recv()
+		//如果服务端推送结束，会返回io.EOF，那客户端就break
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatalln(err)
+		}
+		//这里可以启用goroutines去处理返回的数据
+		fmt.Println(uRes.Users)
+	}
 }
